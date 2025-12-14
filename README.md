@@ -3,31 +3,31 @@
 ## Working Flow
 
 1. **Application Start**
-   - Project run karne ke liye `app.py` file execute hoti hai.
-   - Browser me main page open hota hai.
+   - To run the project, execute the `app.py` file.
+   - The main page opens in the browser.
 
 2. **Login Page**
-   - Sabse pehle user ko login page dikhai deta hai.
-   - Yaha username aur password enter karna hota hai.
+   - The login page is displayed first.
+   - The user needs to enter a username and password.
 
 3. **Authentication**
-   - System entered credentials ko verify karta hai.
-   - Agar credentials valid hote hain to user next page par redirect hota hai.
-   - Agar invalid hote hain to error message show hota hai.
+   - The system verifies the entered credentials.
+   - If the credentials are valid, the user is redirected to the next page.
+   - If the credentials are invalid, an error message is displayed.
 
 4. **User Login Flow**
-   - Normal user login karne ke baad `home.html` page open hota hai.
-   - User apna account details dekh sakta hai.
-   - User transaction perform kar sakta hai.
-   - User apni transaction history `history.html` page par dekh sakta hai.
+   - After a successful user login, the `home.html` page is opened.
+   - The user can view account details.
+   - The user can perform transactions.
+   - The user can view transaction history on the `history.html` page.
 
 5. **Admin Login Flow**
-   - Admin login karne par `admin_home.html` page open hota hai.
-   - Admin sabhi users ke transactions ko monitor kar sakta hai.
-   - Admin `admin_history.html` page par complete transaction history dekh sakta hai.
+   - After admin login, the `admin_home.html` page is opened.
+   - The admin can monitor all user transactions.
+   - The admin can view the complete transaction history on the `admin_history.html` page.
 
 6. **Additional Page**
-   - `ai.html` page extra functionality ke liye use ki gayi hai.
+   - The `ai.html` page is used for additional functionality.
 
 ---
 
