@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Page Title -->
+<title>Modern Login | Orange Dashboard UI</title>
+
+<style>
+    /* IMPORT GOOGLE FONT */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+    /* GLOBAL RESET */
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Inter',sans-serif;
+    }
+
+    /* PAGE BACKGROUND */
+    body{
+        background:#f8f8f8;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+
+    /* LOGIN CARD CONTAINER */
+    .login-container{
+        width:380px;
+        background:#fff;
+        padding:40px 35px;
+        border-radius:22px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.06);
+        text-align:center;
+        transition:.3s;
+    }
+
+    /* HEADING */
+    .title{
+        font-size:26px;
+        font-weight:600;
+        color:#ff7b47;
+        margin-bottom:20px;
+    }
+
+    /* ROLE SELECTION (User / Admin) */
+    .role-box{
+        display:flex;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:25px;
+    }
+
+    .role-option{
+        flex:1;
+        padding:10px 0;
+        background:#f3f3f3;
+        border-radius:12px;
+        cursor:pointer;
+        font-weight:500;
+        transition:.3s;
+        border:2px solid transparent;
+    }
+
+    /* Active role styling */
+    .role-option.active{
+        background:linear-gradient(to right,#ff8658,#ff5834);
+        color:#fff;
+        border-color:#ff5834;
+    }
+
+    /* INPUT FIELDS */
+    .input-group{
+        width:100%;
+        text-align:left;
+        margin-bottom:18px;
+    }
+
+    .input-group label{
+        font-size:14px;
+        font-weight:500;
+        margin-bottom:7px;
+        display:block;
+        color:#444;
+    }
+
+    .input-group input{
+        width:100%;
+        padding:12px;
+        border-radius:12px;
+        border:1px solid #ddd;
+        outline:none;
+        font-size:14px;
+        transition:.3s;
+    }
+
+    /* Input focus effect */
+    .input-group input:focus{
+        border-color:#ff6c45;
+        box-shadow:0 0 4px rgba(255,108,69,0.3);
+    }
+
+    /* LOGIN BUTTON STATES */
+    .login-btn{
+        width:100%;
+        padding:14px;
+        background:linear-gradient(to right,#ff8658,#ff5834);
+        border:none;
+        color:#fff;
+        font-size:16px;
+        font-weight:600;
+        border-radius:14px;
+        cursor:pointer;
+        transition:.2s;
+        margin-top:12px;
+    }
+
+    /* Loading state */
+    .login-btn.loading{
+        background:linear-gradient(to right,#aaa,#888);
+        cursor:not-allowed;
+    }
+
+    /* Success state */
+    .login-btn.success{
+        background:linear-gradient(to right,#1ca84c,#159a40);
+    }
+
+    /* Error state */
+    .login-btn.error{
+        background:linear-gradient(to right,#d9534f,#c9302c);
+    }
+
+    /* Hover animation */
+    .login-btn:hover{
+        transform:translateY(-2px);
+        box-shadow:0 6px 18px rgba(255,91,44,0.3);
+    }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN CARD -->
+<div class="login-container">
+
+    <!-- Title -->
+    <div class="title">Welcome Back</div>
+
+    <!-- Role Selection -->
+    <div class="role-box">
+        <div class="role-option active" onclick="selectRole('user', this)">User</div>
+        <div class="role-option" onclick="selectRole('admin', this)">Admin</div>
+    </div>
+
+    <!-- Username Input -->
+    <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Enter your username">
+    </div>
+
+    <!-- Password Input -->
+    <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter your password">
+    </div>
+
+    <!-- Login Button -->
+    <button class="login-btn" id="loginBtn" onclick="login()">Login</button>
+
+</div>
+
+<script>
+/* GLOBAL VARIABLES */
+let selectedRole = "user"; // default role
+
+/* ROLE SELECTION FUNCTION */
+function selectRole(role, element){
+    selectedRole = role;
+
+    // Remove active class from all roles
+    document.querySelectorAll(".role-option")
+            .forEach(opt => opt.classList.remove("active"));
+
+    // Add active class to selected role
+    element.classList.add("active");
+}
+
+/* LOGIN FUNCTION */
+async function login(){
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const btn  = document.getElementById("loginBtn");
+
+    /* Validation check */
+    if(user === "" || pass === ""){
+        btn.className = "login-btn error";
+        btn.innerText = "Invalid User";
+        resetButton(btn);
+        return;
+    }
+
+    /* Loading UI */
+    btn.disabled = true;
+    btn.className = "login-btn loading";
+    btn.innerText = "Logging in...";
+
+    try {
+        /* API call to backend */
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: user,
+                password: pass,
+                role: selectedRole
+            })
+        });
+
+        const result = await response.json();
+
+        /* If login successful */
+        if(result.success){
+            btn.className = "login-btn success";
+            btn.innerText = "Login Successfully";
+
+            /* Store session data */
+            localStorage.setItem("td_username", user);
+            localStorage.setItem("td_role", result.role);
+
+            /* Redirect based on role */
+            setTimeout(() => {
+                if(result.role === "admin"){
+                    window.location.href = "admin_home.html";
+                } else {
+                    window.location.href = "home.html";
+                }
+            }, 1000);
+
+        } else {
+            /* Invalid credentials */
+            btn.className = "login-btn error";
+            btn.innerText = "Invalid User";
+            resetButton(btn);
+        }
+
+    } catch (error) {
+        /* Server / Network error */
+        console.error(error);
+        btn.className = "login-btn error";
+        btn.innerText = "Server Error";
+        resetButton(btn);
+    }
+}
+
+/* RESET BUTTON AFTER ERROR */
+function resetButton(btn){
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.className = "login-btn";
+        btn.innerText = "Login";
+    }, 2000);
+}
+
+/* ENTER KEY SUPPORT */
+document.addEventListener("keydown", function(event){
+    if(event.key === "Enter"){
+        const btn = document.getElementById("loginBtn");
+
+        // Prevent multiple submissions
+        if(!btn.disabled){
+            login();
+        }
+    }
+});
+</script>
+
+</body>
+</html>

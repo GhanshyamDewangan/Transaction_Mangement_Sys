@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Basic meta setup -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Page title -->
+  <title>Transaction Dashboard — Home</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* THEME VARIABLES (Easy to tweak) */
+    :root{
+      --bg:#f5f5f7;
+      --card:#ffffff;
+      --accent-start:#ff8a5a;
+      --accent-end:#ff5b36;
+      --muted:#7b7b85;
+      --shadow:0 8px 20px rgba(0,0,0,0.05);
+      --pending-bg:#fff0e6;
+      --pending-text:#ff7a32;
+    }
+
+    /* Global reset */
+    *{
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+      margin:0;
+      padding:0;
+    }
+
+    /* Page layout */
+    body{
+      background:#f3f3f6;
+      display:flex;
+      height:100vh;
+      overflow:hidden;
+    }
+
+    /* SIDEBAR STYLES */
+    .sidebar{
+      width:260px;
+      background:#fff4ee;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      border-right:1px solid rgba(0,0,0,0.08);
+    }
+
+    /* User profile section */
+    .profile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    /* Circular avatar */
+    .avatar{
+      width:60px;
+      height:60px;
+      background:#ffe2d6;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#ff5b36;
+      font-weight:700;
+      font-size:22px;
+    }
+
+    .name{font-weight:700;font-size:18px}
+    .role{font-size:13px;color:var(--muted)}
+
+    /* Sidebar navigation */
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:20px;
+    }
+
+    .nav button{
+      padding:10px 14px;
+      border:none;
+      background:none;
+      text-align:left;
+      font-weight:600;
+      border-radius:12px;
+      cursor:pointer;
+    }
+
+    /* Active menu item */
+    .nav button.active{
+      background:#ffefe9;
+      color:#ff5b36;
+    }
+
+    /* Logout button */
+    .logout-btn{
+      margin-top:auto;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid #ffd5c8;
+      background:#fff;
+      color:#ff5b36;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main{
+      flex:1;
+      overflow-y:auto;
+      padding:34px 40px;
+    }
+
+    /* Top greeting row */
+    .top-row{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:25px;
+    }
+
+    /* Summary cards */
+    .cards{
+      display:flex;
+      gap:20px;
+      margin-bottom:28px;
+    }
+
+    .card{
+      background:#fff;
+      padding:20px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      flex:1;
+    }
+
+    .value{
+      font-size:26px;
+      font-weight:700;
+    }
+
+    /* TRANSACTION FORM */
+    .form-area{
+      background:#fff;
+      padding:28px;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+    }
+
+    /* Grid layout for inputs */
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+    }
+
+    .field label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .field input{
+      padding:12px;
+      border:1px solid #ddd;
+      border-radius:10px;
+    }
+
+    /* Primary action button */
+    .btn-primary{
+      margin-top:18px;
+      padding:13px 20px;
+      background:linear-gradient(90deg,#ff8a5a,#ff5b36);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* TRANSACTION LIST */
+    .transactions{
+      margin-top:20px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .tx{
+      background:#fff;
+      border-radius:16px;
+      padding:18px;
+      display:flex;
+      justify-content:space-between;
+      box-shadow:var(--shadow);
+    }
+
+    .tid{
+      color:var(--accent);
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    .status-badge{
+      background:var(--pending-bg);
+      color:var(--pending-text);
+      padding:6px 12px;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR SECTION -->
+<div class="sidebar">
+
+  <!-- User profile -->
+  <div class="profile">
+    <div class="avatar" id="avatar">U</div>
+    <div>
+      <div class="name" id="profileName">User</div>
+      <div class="role" id="profileRole">role</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button class="active">Home</button>
+    <button onclick="location.href='history.html'">History</button>
+    <button onclick="location.href='ai.html'">AI Assistant</button>
+  </div>
+
+  <!-- Logout -->
+  <button class="logout-btn" onclick="logout()">Log out</button>
+</div>
+
+<!--  MAIN DASHBOARD -->
+<div class="main">
+
+  <!-- Welcome header -->
+  <div class="top-row">
+    <div>
+      <div style="font-size:26px;font-weight:700" id="welcomeTitle">Welcome</div>
+      <div style="color:var(--muted);font-size:13px">Dashboard Overview</div>
+    </div>
+    <div id="topUser" style="font-weight:700;color:#ff5b36"></div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="cards">
+    <div class="card"><div>Total Balance</div><div class="value" id="totalBalance">₹ 0</div></div>
+    <div class="card"><div>Today's Transactions</div><div class="value" id="todayCount">0</div></div>
+    <div class="card"><div>Quick Summary</div><div class="value" id="summary">0 Transactions</div></div>
+  </div>
+
+  <!-- NEW TRANSACTION FORM -->
+  <div class="form-area">
+    <h3>New Transaction</h3>
+
+    <form onsubmit="submitTx(event)">
+      <div class="form-grid">
+
+        <!-- Auto generated Transaction ID -->
+        <div class="field">
+          <label>Transaction ID</label>
+          <input id="txid" readonly>
+        </div>
+
+        <!-- Date (defaults to today) -->
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="txDate">
+        </div>
+
+        <!-- Logged-in user -->
+        <div class="field">
+          <label>Requester</label>
+          <input id="requester" readonly>
+        </div>
+
+        <!-- Amount -->
+        <div class="field">
+          <label>Amount</label>
+          <input type="number" id="amount">
+        </div>
+
+        <!-- Auto converted amount in words -->
+        <div class="field">
+          <label>Amount in words</label>
+          <input id="amountWords" readonly>
+        </div>
+
+        <!-- Payee name -->
+        <div class="field">
+          <label>Payee</label>
+          <input id="payee">
+        </div>
+      </div>
+
+      <!-- Submit transaction -->
+      <button class="btn-primary" id="submitBtn">Transact Now</button>
+    </form>
+
+    <!-- Recent transactions list -->
+    <h3 style="margin-top:30px">Recent Transactions</h3>
+    <div class="transactions" id="transactionsList"></div>
+  </div>
+</div>
+
+<script>
+
+/* HELPER: GET TODAY DATE (YYYY-MM-DD) */
+function todayDate(){
+  return new Date().toISOString().split("T")[0];
+}
+
+/* USER SESSION DATA */
+const user = localStorage.getItem("td_username");
+const role = localStorage.getItem("td_role");
+
+/* Redirect to login if not logged in */
+if(!user){ location.href="index.html"; }
+
+/* Fill user info in UI */
+profileName.innerText = user;
+profileRole.innerText = role;
+topUser.innerText = user;
+welcomeTitle.innerText = `Welcome, ${user}`;
+avatar.innerText = user[0].toUpperCase();
+
+/* Pre-fill date and requester */
+txDate.value = todayDate();
+requester.value = user;
+
+/* LOGOUT FUNCTION */
+function logout(){
+  localStorage.clear();     // clear session
+  location.href="index.html";
+}
+
+/* LOAD NEXT TRANSACTION ID  */
+async function loadNextTID(){
+  const r = await fetch(`http://127.0.0.1:5000/next-transaction-id/${user}`);
+  const d = await r.json();
+  txid.value = d.next_id;
+}
+
+/* CONVERT NUMBER TO WORDS */
+function numberToWords(num){
+  if(num===0) return "Zero";
+  const ones=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+
+  function convert(n){
+    if(n<20) return ones[n];
+    if(n<100) return tens[Math.floor(n/10)] + (n%10?" "+ones[n%10]:"");
+    if(n<1000) return ones[Math.floor(n/100)]+" Hundred"+(n%100?" "+convert(n%100):"");
+    if(n<100000) return convert(Math.floor(n/1000))+" Thousand"+(n%1000?" "+convert(n%1000):"");
+    if(n<10000000) return convert(Math.floor(n/100000))+" Lakh"+(n%100000?" "+convert(n%100000):"");
+    return convert(Math.floor(n/10000000))+" Crore"+(n%10000000?" "+convert(n%10000000):"");
+  }
+  return convert(num);
+}
+
+/* Auto convert amount to words */
+amount.addEventListener("input",()=>{
+  amountWords.value = amount.value ? numberToWords(+amount.value)+" Rupees" : "";
+});
+
+/* SUBMIT TRANSACTION  */
+async function submitTx(e){
+  e.preventDefault();
+
+  if(!amount.value){
+    alert("Please enter amount");
+    return;
+  }
+
+  const btn = submitBtn;
+  btn.innerText="Transacting...";
+  btn.disabled=true;
+
+  const payload={
+    transaction_id:txid.value,
+    date:txDate.value,
+    time:new Date().toLocaleTimeString(),
+    requester:user,
+    payee:payee.value||"-",
+    amount:amount.value,
+    amount_words:amountWords.value
+  };
+
+  try{
+    const r=await fetch("http://127.0.0.1:5000/add-transaction",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    const res=await r.json();
+
+    if(res.success){
+      btn.innerText="Transaction Done";
+      btn.style.background="#1ca84c";
+
+      amount.value="";
+      amountWords.value="";
+      payee.value="";
+
+      loadNextTID();
+      loadTransactions();
+
+      setTimeout(()=>{
+        btn.innerText="Transact Now";
+        btn.disabled=false;
+        btn.style.background="linear-gradient(90deg,#ff8a5a,#ff5b36)";
+      },2000);
+    }
+  }catch(err){
+    alert("Server error");
+    btn.disabled=false;
+    btn.innerText="Transact Now";
+    console.error(err);
+  }
+}
+
+/* LOAD TODAY'S TRANSACTIONS */
+async function loadTransactions(){
+  const r=await fetch(`http://127.0.0.1:5000/get-transactions/${user}`);
+  const list=await r.json();
+
+  const todayList=list.filter(t=>t.transaction_date===todayDate());
+
+  summary.innerText=todayList.length+" Transactions";
+  todayCount.innerText=todayList.length;
+  totalBalance.innerText="₹ "+list.reduce((a,b)=>a+parseInt(b.amount),0);
+
+  transactionsList.innerHTML="";
+  todayList.forEach(t=>{
+    transactionsList.innerHTML+=`
+      <div class="tx">
+        <div>
+          <div class="tid">${t.transaction_id}</div>
+          <div>₹ ${t.amount} — ${t.payee}</div>
+        </div>
+        <div>
+          <div class="status-badge">${t.status}</div>
+          <div>${t.transaction_date}</div>
+        </div>
+      </div>`;
+  });
+}
+
+/* INITIAL LOAD */
+loadNextTID();
+loadTransactions();
+</script>
+
+</body>
+</html>

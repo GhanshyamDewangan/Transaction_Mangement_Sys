@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Transaction Dashboard — History</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Theme colors */
+    :root {
+      --bg:#f5f5f7;
+      --card:#ffffff;
+      --accent:#ff5b36;
+      --muted:#7b7b85;
+      --shadow:0 8px 20px rgba(0,0,0,0.05);
+      --pending:#ff7a32;
+      --rejected:#d9534f;
+      --approved:#1ca84c;
+    }
+
+    /* Global reset */
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    /* Page layout */
+    body{
+      width:100%;
+      height:100vh;
+      overflow:hidden;
+      display:flex;
+      background:#f3f3f6;
+    }
+
+    /* Sidebar container */
+    .sidebar{
+      width:260px;
+      height:100vh;
+      background:#fff4ee;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      border-right:1px solid rgba(0,0,0,0.08);
+    }
+
+    /* User profile area */
+    .profile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    /* User avatar */
+    .avatar{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#ffe2d6;
+      color:#ff5b36;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:22px;
+      font-weight:700;
+      box-shadow:0 6px 18px rgba(255,91,44,0.2);
+    }
+
+    .name{font-size:18px;font-weight:700;color:#222;}
+    .role{font-size:13px;color:var(--muted);}
+
+    /* Sidebar navigation */
+    .nav{
+      margin-top:24px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .nav button{
+      padding:10px 14px;
+      background:transparent;
+      border:none;
+      text-align:left;
+      font-weight:600;
+      font-size:15px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    /* Active menu */
+    .nav button.active{
+      background:#ffefe9;
+      color:#ff5b36;
+    }
+
+    /* Logout button */
+    .logout-btn{
+      margin-top:auto;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid #ffd1c1;
+      font-weight:700;
+      color:#ff5b36;
+      background:white;
+      cursor:pointer;
+    }
+
+    /* Main content */
+    .main{
+      flex:1;
+      height:100vh;
+      overflow-y:auto;
+      padding:34px 40px;
+    }
+
+    /* Top header */
+    .top-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:25px;
+    }
+
+    /* Summary cards */
+    .cards{
+      display:flex;
+      gap:20px;
+      margin-bottom:28px;
+    }
+
+    .card{
+      flex:1;
+      padding:20px;
+      border-radius:14px;
+      background:white;
+      box-shadow:var(--shadow);
+    }
+
+    .value{
+      font-size:28px;
+      font-weight:700;
+      margin-top:6px;
+      color:#222;
+    }
+
+    /* Approved / Rejected tabs */
+    .tabs{
+      display:flex;
+      gap:14px;
+      margin-bottom:22px;
+    }
+
+    .tab-btn{
+      padding:10px 22px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      background:white;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    /* Active tab */
+    .tab-btn.active{
+      background:linear-gradient(90deg,#ff8a5a,#ff5b36);
+      color:white;
+      border:none;
+    }
+
+    /* Transaction card */
+    .tx{
+      background:white;
+      padding:16px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .tid{
+      color:var(--accent);
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    .tx-amount{
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .sub{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .status-approved{
+      color:var(--approved);
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .status-rejected{
+      color:var(--rejected);
+      font-weight:800;
+      font-size:14px;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+  <!-- Logged-in user info -->
+  <div class="profile">
+    <div class="avatar" id="avatar">U</div>
+    <div>
+      <div class="name" id="profileName">User</div>
+      <div class="role" id="profileRole">role</div>
+    </div>
+  </div>
+
+  <!-- Navigation menu -->
+  <div class="nav">
+    <button onclick="goHome()">Home</button>
+    <button class="active">History</button>
+    <button onclick="goAI()">AI Assistant</button>
+  </div>
+
+  <!-- Logout -->
+  <button class="logout-btn" onclick="logout()">Log out</button>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- Page heading -->
+  <div class="top-row">
+    <div>
+      <div style="font-size:26px;font-weight:700;">Transaction History</div>
+      <div style="color:var(--muted);font-size:13px;">Approved & Rejected Record</div>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="cards">
+    <div class="card">
+      <h4>Total Approved</h4>
+      <div class="value" id="approvedCount">0</div>
+    </div>
+
+    <div class="card">
+      <h4>Total Rejected</h4>
+      <div class="value" id="rejectedCount">0</div>
+    </div>
+  </div>
+
+  <!-- Status tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tabApproved" onclick="switchTab('approved')">Approved</button>
+    <button class="tab-btn" id="tabRejected" onclick="switchTab('rejected')">Rejected</button>
+  </div>
+
+  <!-- Approved transactions -->
+  <div id="approvedList"></div>
+
+  <!-- Rejected transactions -->
+  <div id="rejectedList" style="display:none;"></div>
+
+</div>
+
+<script>
+/* CHECK USER LOGIN */
+const user = localStorage.getItem("td_username");
+const role = localStorage.getItem("td_role");
+
+/* Redirect if user not logged in */
+if(!user){
+  window.location.href = "index.html";
+}
+
+/* Fill user info in sidebar */
+profileName.innerText = user;
+profileRole.innerText = role;
+avatar.innerText = user.charAt(0).toUpperCase();
+
+/* Store approved and rejected data */
+let approvedData = [];
+let rejectedData = [];
+
+/* Fetch transaction history from backend */
+async function loadHistory(){
+  const res = await fetch(`http://127.0.0.1:5000/user/history/${user}`);
+  const data = await res.json();
+
+  approvedData = data.filter(t => t.status === "Approved");
+  rejectedData = data.filter(t => t.status === "Rejected");
+
+  approvedCount.innerText = approvedData.length;
+  rejectedCount.innerText = rejectedData.length;
+
+  renderApproved();
+}
+
+/* Show approved transactions */
+function renderApproved(){
+  approvedList.innerHTML = "";
+
+  approvedData.forEach(tx=>{
+    approvedList.innerHTML += `
+      <div class="tx">
+        <div>
+          <div class="tid">${tx.transaction_id}</div>
+          <div class="tx-amount">₹ ${tx.amount} — ${tx.payee}</div>
+          <div class="sub">${tx.transaction_date} • ${tx.transaction_time}</div>
+        </div>
+        <div class="status-approved">APPROVED</div>
+      </div>`;
+  });
+}
+
+/* Show rejected transactions */
+function renderRejected(){
+  rejectedList.innerHTML = "";
+
+  rejectedData.forEach(tx=>{
+    rejectedList.innerHTML += `
+      <div class="tx">
+        <div>
+          <div class="tid">${tx.transaction_id}</div>
+          <div class="tx-amount">₹ ${tx.amount} — ${tx.payee}</div>
+          <div class="sub">${tx.transaction_date} • ${tx.transaction_time}</div>
+        </div>
+        <div class="status-rejected">REJECTED</div>
+      </div>`;
+  });
+}
+
+/* Switch between approved and rejected tabs */
+function switchTab(tab){
+  if(tab === "approved"){
+    approvedList.style.display = "block";
+    rejectedList.style.display = "none";
+    tabApproved.classList.add("active");
+    tabRejected.classList.remove("active");
+    renderApproved();
+  }else{
+    approvedList.style.display = "none";
+    rejectedList.style.display = "block";
+    tabRejected.classList.add("active");
+    tabApproved.classList.remove("active");
+    renderRejected();
+  }
+}
+
+/* Go to home page */
+function goHome(){
+  window.location.href = "home.html";
+}
+
+/* Go to AI assistant page */
+function goAI(){
+  window.location.href = "ai.html";
+}
+
+/* Logout user */
+function logout(){
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+
+/* INITIAL LOAD */
+loadHistory();
+</script>
+
+</body>
+</html>

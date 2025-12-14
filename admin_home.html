@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Dashboard — Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Theme colors */
+  :root{
+    --bg:#f3f3f6;
+    --accent:#ff5b36;
+    --muted:#7b7b85;
+    --card:#fff;
+    --shadow:0 8px 20px rgba(0,0,0,0.05);
+    --ok:#1ca84c;
+    --bad:#d9534f;
+  }
+
+  /* Global reset */
+  *{
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+    margin:0;
+    padding:0;
+  }
+
+  /* Page layout */
+  body{
+    display:flex;
+    height:100vh;
+    background:var(--bg);
+    overflow:hidden;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:260px;
+    height:100vh;
+    background:#fff4ee;
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    border-right:1px solid rgba(0,0,0,0.08);
+  }
+
+  /* Admin profile */
+  .profile{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:18px;
+  }
+
+  /* Avatar */
+  .avatar{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#ffe2d6;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:22px;
+    box-shadow:0 6px 18px rgba(255,91,44,0.18);
+  }
+
+  .name{font-weight:700;color:#222;font-size:18px;}
+  .role{font-size:13px;color:var(--muted);}
+
+  /* Navigation */
+  .nav{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:8px;
+  }
+
+  .nav button{
+    padding:10px 14px;
+    border:none;
+    background:transparent;
+    text-align:left;
+    font-weight:600;
+    font-size:15px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  .nav button:hover{
+    background:#ffe7df;
+    transform:translateX(4px);
+  }
+
+  .nav button.active{
+    background:#ffefe9;
+    color:var(--accent);
+  }
+
+  /* Logout button */
+  .logout-btn{
+    margin-top:auto;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #ffd1c1;
+    background:white;
+    color:var(--accent);
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  /* Main content */
+  .main{
+    flex:1;
+    height:100vh;
+    overflow-y:auto;
+    padding:34px 40px;
+  }
+
+  /* Header row */
+  .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+  }
+
+  .title{font-size:22px;font-weight:700;}
+  .subtitle{color:var(--muted);font-size:13px;}
+
+  /* Dashboard cards */
+  .cards{
+    display:flex;
+    gap:18px;
+    margin-bottom:22px;
+  }
+
+  .card{
+    background:var(--card);
+    padding:18px;
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .card h4{font-size:13px;color:var(--muted);}
+  .card .num{font-size:26px;font-weight:800;color:#222;}
+
+  /* Pending transactions section */
+  .section{
+    background:var(--card);
+    padding:18px;
+    border-radius:12px;
+    box-shadow:var(--shadow);
+  }
+
+  .section h3{font-size:18px;margin-bottom:12px;}
+
+  .pending-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .pending-item{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #f0f0f0;
+    background:#fff;
+  }
+
+  .left{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  .tid{
+    color:var(--accent);
+    font-weight:700;
+    font-size:14px;
+  }
+
+  .meta{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .meta .label{
+    font-weight:700;
+    color:#222;
+  }
+
+  .meta .sub{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  .right{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  /* Action buttons */
+  .btn{
+    padding:8px 12px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+  }
+
+  .btn.approve{
+    background:linear-gradient(90deg,#2ecc71,#1ca84c);
+    color:white;
+  }
+
+  .btn.reject{
+    background:linear-gradient(90deg,#ff7b6a,#d9534f);
+    color:white;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+  <!-- Admin profile -->
+  <div class="profile">
+    <div class="avatar" id="avatar">A</div>
+    <div>
+      <div class="name" id="profileName">Admin</div>
+      <div class="role" id="profileRole">Admin</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button class="active" onclick="goHome()">Home</button>
+    <button onclick="goHistory()">History</button>
+    <button onclick="goAI()">AI Assistant</button>
+  </div>
+
+  <!-- Logout -->
+  <button class="logout-btn" onclick="logout()">Log out</button>
+</div>
+
+<!-- Main dashboard -->
+<div class="main">
+
+  <!-- Header -->
+  <div class="top-row">
+    <div>
+      <div class="title">Admin Home Dashboard</div>
+      <div class="subtitle">Approve or reject user transactions</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-weight:700;color:var(--accent);" id="topAdmin">Admin</div>
+    </div>
+  </div>
+
+  <!-- Stats cards -->
+  <div class="cards">
+    <div class="card">
+      <h4>Today's Approvals</h4>
+      <div class="num" id="todaysApproved">0</div>
+    </div>
+
+    <div class="card">
+      <h4>Total Approved</h4>
+      <div class="num" id="totalApproved">0</div>
+    </div>
+
+    <div class="card">
+      <h4>Today's Rejected</h4>
+      <div class="num" id="todaysRejected">0</div>
+    </div>
+  </div>
+
+  <!-- Pending transactions -->
+  <div class="section">
+    <h3>Pending Transactions</h3>
+    <div class="pending-list" id="pendingList"></div>
+  </div>
+
+</div>
+
+<script>
+/* Check admin role */
+const role = localStorage.getItem("td_role");
+
+if(role !== "admin"){
+  window.location.href = "index.html";
+}
+
+/* Navigation functions */
+function goHome(){
+  window.location.href = "admin_home.html";
+}
+
+function goHistory(){
+  window.location.href = "admin_history.html";
+}
+
+function goAI(){
+  window.location.href = "ai.html";
+}
+
+/* Logout admin */
+function logout(){
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+
+/* Set admin details */
+profileName.innerText = "Admin";
+profileRole.innerText = "Administrator";
+topAdmin.innerText = "Admin";
+
+/* Load pending transactions */
+async function loadPending(){
+  const r = await fetch("http://127.0.0.1:5000/admin/pending-transactions");
+  const list = await r.json();
+
+  pendingList.innerHTML = "";
+
+  list.forEach(t=>{
+    pendingList.innerHTML += `
+      <div class="pending-item">
+        <div class="left">
+          <div class="tid">${t.transaction_id}</div>
+          <div class="meta">
+            <div class="label">₹ ${t.amount} — ${t.requester}</div>
+            <div class="sub">${t.payee} | ${t.transaction_date}</div>
+          </div>
+        </div>
+
+        <div class="right">
+          <button class="btn approve" onclick="updateStatus(${t.id}, 'Approved')">Approve</button>
+          <button class="btn reject" onclick="updateStatus(${t.id}, 'Rejected')">Reject</button>
+        </div>
+      </div>`;
+  });
+}
+
+/* Get today's date */
+const TODAY = new Date().toISOString().split("T")[0];
+
+/* Load dashboard stats */
+async function loadStats(){
+  const r = await fetch("http://127.0.0.1:5000/admin/stats");
+  const list = await r.json();
+
+  const todaysApproved = list.filter(
+    t => t.status === "Approved" && t.transaction_date === TODAY
+  ).length;
+
+  const todaysRejected = list.filter(
+    t => t.status === "Rejected" && t.transaction_date === TODAY
+  ).length;
+
+  todaysApproved && (todaysApproved.innerText = todaysApproved);
+
+  document.getElementById("todaysApproved").innerText = todaysApproved;
+  document.getElementById("totalApproved").innerText = todaysApproved;
+  document.getElementById("todaysRejected").innerText = todaysRejected;
+}
+
+/* Update transaction status */
+async function updateStatus(id, status){
+  await fetch("http://127.0.0.1:5000/admin/update-status",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ id, status })
+  });
+
+  loadPending();
+  loadStats();
+}
+
+/* INITIAL LOAD */
+loadPending();
+loadStats();
+</script>
+
+</body>
+</html>
