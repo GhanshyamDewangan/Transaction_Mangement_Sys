@@ -356,7 +356,7 @@ function logout(){
 
 /* LOAD NEXT TRANSACTION ID  */
 async function loadNextTID(){
-  const r = await fetch(`http://127.0.0.1:5000/next-transaction-id/${user}`);
+  const r = await fetch(`${API_BASE}/next-transaction-id/${user}`);
   const d = await r.json();
   txid.value = d.next_id;
 }
@@ -408,12 +408,11 @@ async function submitTx(e){
   };
 
   try{
-    const r=await fetch("http://127.0.0.1:5000/add-transaction",{
+    const r = await fetch(`${API_BASE}/add-transaction`,{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{ "Content-Type":"application/json" },
       body:JSON.stringify(payload)
     });
-
     const res=await r.json();
 
     if(res.success){
@@ -443,18 +442,22 @@ async function submitTx(e){
 
 /* LOAD TODAY'S TRANSACTIONS */
 async function loadTransactions(){
-  const r=await fetch(`http://127.0.0.1:5000/get-transactions/${user}`);
-  const list=await r.json();
+  const r = await fetch(`${API_BASE}/get-transactions/${user}`);
+  const list = await r.json();
 
-  const todayList=list.filter(t=>t.transaction_date===todayDate());
+  const todayList = list.filter(
+    t => t.transaction_date === todayDate()
+  );
 
-  summary.innerText=todayList.length+" Transactions";
-  todayCount.innerText=todayList.length;
-  totalBalance.innerText="₹ "+list.reduce((a,b)=>a+parseInt(b.amount),0);
+  summary.innerText = todayList.length + " Transactions";
+  todayCount.innerText = todayList.length;
+  totalBalance.innerText =
+    "₹ " + list.reduce((a,b)=>a + parseInt(b.amount), 0);
 
-  transactionsList.innerHTML="";
+  transactionsList.innerHTML = "";
+
   todayList.forEach(t=>{
-    transactionsList.innerHTML+=`
+    transactionsList.innerHTML += `
       <div class="tx">
         <div>
           <div class="tid">${t.transaction_id}</div>
