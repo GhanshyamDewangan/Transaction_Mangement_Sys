@@ -301,6 +301,9 @@
 </div>
 
 <script>
+/* ===== API BASE URL (MUST BE ON TOP) ===== */
+const API_BASE = window.location.origin;
+
 /* Check admin role */
 const role = localStorage.getItem("td_role");
 
@@ -334,7 +337,7 @@ topAdmin.innerText = "Admin";
 
 /* Load pending transactions */
 async function loadPending(){
-  const r = await fetch("http://127.0.0.1:5000/admin/pending-transactions");
+  const r = await fetch(`${API_BASE}/admin/pending-transactions`);
   const list = await r.json();
 
   pendingList.innerHTML = "";
@@ -363,7 +366,7 @@ const TODAY = new Date().toISOString().split("T")[0];
 
 /* Load dashboard stats */
 async function loadStats(){
-  const r = await fetch("http://127.0.0.1:5000/admin/stats");
+  const r = await fetch(`${API_BASE}/admin/stats`);
   const list = await r.json();
 
   const todaysApproved = list.filter(
@@ -383,9 +386,9 @@ async function loadStats(){
 
 /* Update transaction status */
 async function updateStatus(id, status){
-  await fetch("http://127.0.0.1:5000/admin/update-status",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
+  await fetch(`${API_BASE}/admin/update-status`,{
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id, status })
   });
 

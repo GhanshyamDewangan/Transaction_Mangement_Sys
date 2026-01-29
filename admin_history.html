@@ -264,6 +264,9 @@
 </div>
 
 <script>
+/* ===== API BASE URL (MUST BE ON TOP) ===== */
+const API_BASE = window.location.origin;
+
 /* Check admin login */
 const role = localStorage.getItem("td_role");
 const admin = localStorage.getItem("td_username") || "Admin";
@@ -282,7 +285,7 @@ let rejectedData = [];
 
 /* Fetch admin history */
 async function loadAdminHistory(){
-  const res = await fetch("http://127.0.0.1:5000/admin/history");
+  const res = await fetch(`${API_BASE}/admin/history`);
   const data = await res.json();
 
   approvedData = data.filter(t => t.status === "Approved");

@@ -278,6 +278,9 @@
 </div>
 
 <script>
+/* ===== API BASE URL (MUST BE ON TOP) ===== */
+const API_BASE = window.location.origin;
+
 /* CHECK USER LOGIN */
 const user = localStorage.getItem("td_username");
 const role = localStorage.getItem("td_role");
@@ -298,7 +301,7 @@ let rejectedData = [];
 
 /* Fetch transaction history from backend */
 async function loadHistory(){
-  const res = await fetch(`http://127.0.0.1:5000/user/history/${user}`);
+  const res = await fetch(`${API_BASE}/user/history/${user}`);
   const data = await res.json();
 
   approvedData = data.filter(t => t.status === "Approved");
